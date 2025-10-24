@@ -12,9 +12,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "lil-gui": "^0.21.0",
     "three": "^0.180.0"
-  },
-  "devDependencies": {
-    "dat.gui": "^0.7.9"
   }
 }
