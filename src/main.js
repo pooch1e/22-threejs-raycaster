@@ -7,10 +7,19 @@ const gui = new GUI();
 const sizes = {
   height: window.innerHeight,
   width: window.innerWidth,
-  aspect: width / height,
+  get aspect() {
+    return this.width / this.height;
+  },
 };
 
 const scene = new THREE.Scene();
+
+// OBJECTS
+const material = new THREE.MeshStandardMaterial();
+const geometry = new THREE.SphereGeometry(2);
+const sphere = new THREE.Mesh(material, geometry);
+
+scene.add(sphere);
 
 //resizes
 window.addEventListener(() => {
@@ -25,6 +34,8 @@ window.addEventListener(() => {
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
+
+// CAMERA
 
 const camera = new THREE.PerspectiveCamera(75, sizes.aspect);
 camera.position.z = 2;
