@@ -14,15 +14,8 @@ const sizes = {
 
 const scene = new THREE.Scene();
 
-// OBJECTS
-const material = new THREE.MeshStandardMaterial();
-const geometry = new THREE.SphereGeometry(2);
-const sphere = new THREE.Mesh(material, geometry);
-
-scene.add(sphere);
-
 //resizes
-window.addEventListener(() => {
+window.addEventListener('resize', () => {
   sizes.width = window.innerWidth;
   sizes.height = window.innerHeight;
 
@@ -35,10 +28,14 @@ window.addEventListener(() => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
+// LIGHTS
+const ambientLight = new THREE.AmbientLight('white', 1);
+scene.add(ambientLight);
+
 // CAMERA
 
 const camera = new THREE.PerspectiveCamera(75, sizes.aspect);
-camera.position.z = 2;
+camera.position.z = 20;
 
 scene.add(camera);
 
@@ -46,6 +43,19 @@ scene.add(camera);
 const controls = new OrbitControls(camera, canvas);
 controls.target.set(0, 0.75, 0);
 controls.enableDamping = true;
+
+// OBJECTS
+const material = new THREE.MeshStandardMaterial({ color: 'red' });
+const geometry = new THREE.SphereGeometry(2);
+
+const sphere1 = new THREE.Mesh(geometry, material);
+sphere1.position.x = -5;
+const sphere2 = new THREE.Mesh(geometry, material);
+
+const sphere3 = new THREE.Mesh(geometry, material);
+sphere3.position.x = 5;
+
+scene.add(sphere1, sphere2, sphere3);
 
 // Renderer
 
@@ -63,7 +73,7 @@ const tick = () => {
   let deltaTime = elapsedTime - previousTime;
   previousTime = elapsedTime;
 
-  constrols.update();
+  controls.update();
 
   // Render
   renderer.render(scene, camera);
