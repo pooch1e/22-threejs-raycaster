@@ -14,11 +14,14 @@ const sizes = {
   },
 };
 
-const gltfLoader = new GLTFLoader()
+const gltfLoader = new GLTFLoader();
+
+let model;
 gltfLoader.load('/static/models/Duck/glTF/Duck.gltf', (gltf) => {
-  console.log(gltf)
-  scene.add(gltf.scene)
-})
+  console.log(gltf);
+  model = gltf.scene;
+  scene.add(model);
+});
 
 const scene = new THREE.Scene();
 
@@ -63,7 +66,7 @@ const sphere1 = new THREE.Mesh(geometry, material);
 sphere1.position.x = -5;
 
 const sphere2 = new THREE.Mesh(geometry, material.clone());
-sphere2.position.z = -10
+sphere2.position.z = -10;
 const sphere3 = new THREE.Mesh(geometry, material.clone());
 sphere3.position.x = 5;
 
@@ -96,26 +99,26 @@ let previousTime = 0;
 
 let currentIntersect = null;
 
- // listen for click
-  window.addEventListener('click', () => {
-    if (currentIntersect) {
-      
+// listen for click
+window.addEventListener('click', () => {
+  if (currentIntersect) {
+    switch (currentIntersect.object) {
+      case sphere1:
+        console.log('click on object 1');
+        break;
 
-      switch (currentIntersect.object) {
-        case sphere1:
-          console.log('click on object 1');
-          break;
+      case sphere2:
+        console.log('click on object 2');
+        break;
 
-        case sphere2:
-          console.log('click on object 2');
-          break;
-
-        case sphere3:
-          console.log('click on object 3');
-          break;
-      }
+      case sphere3:
+        console.log('click on object 3');
+        break;
     }
-  });
+  }
+});
+
+  // test model intersects
 
 const tick = () => {
   let elapsedTime = clock.getElapsedTime();
@@ -133,6 +136,19 @@ const tick = () => {
   const objectsToTest = [sphere1, sphere2, sphere3];
   const intersects = raycaster.intersectObjects(objectsToTest);
 
+  if (model) {
+    const modelIntersect = raycaster.intersectObject(model);
+
+    if (modelIntersect.length) {
+      model.scale.set(1.2, 1.2, 1.2)
+    } else {
+      model.scale.set(1.0, 1.0, 1.0)
+    }
+    
+    // console.log(modelIntersect, 'model intersect');
+  }
+
+
   if (intersects.length) {
     if (!currentIntersect) {
       console.log('mouse enter');
@@ -144,8 +160,6 @@ const tick = () => {
     }
     currentIntersect = null;
   }
-
- 
 
   for (const intersect of intersects) {
     intersect.object.material.color.set('#0000ff');
