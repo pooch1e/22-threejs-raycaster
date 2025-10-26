@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 import { GUI } from 'lil-gui';
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 
 const canvas = document.getElementById('threecanvas');
 const gui = new GUI();
+
 const sizes = {
   height: window.innerHeight,
   width: window.innerWidth,
@@ -11,6 +13,12 @@ const sizes = {
     return this.width / this.height;
   },
 };
+
+const gltfLoader = new GLTFLoader()
+gltfLoader.load('/static/models/Duck/glTF/Duck.gltf', (gltf) => {
+  console.log(gltf)
+  scene.add(gltf.scene)
+})
 
 const scene = new THREE.Scene();
 
@@ -53,8 +61,9 @@ const geometry = new THREE.SphereGeometry(2);
 
 const sphere1 = new THREE.Mesh(geometry, material);
 sphere1.position.x = -5;
-const sphere2 = new THREE.Mesh(geometry, material.clone());
 
+const sphere2 = new THREE.Mesh(geometry, material.clone());
+sphere2.position.z = -10
 const sphere3 = new THREE.Mesh(geometry, material.clone());
 sphere3.position.x = 5;
 
@@ -87,6 +96,27 @@ let previousTime = 0;
 
 let currentIntersect = null;
 
+ // listen for click
+  window.addEventListener('click', () => {
+    if (currentIntersect) {
+      
+
+      switch (currentIntersect.object) {
+        case sphere1:
+          console.log('click on object 1');
+          break;
+
+        case sphere2:
+          console.log('click on object 2');
+          break;
+
+        case sphere3:
+          console.log('click on object 3');
+          break;
+      }
+    }
+  });
+
 const tick = () => {
   let elapsedTime = clock.getElapsedTime();
   let deltaTime = elapsedTime - previousTime;
@@ -115,12 +145,7 @@ const tick = () => {
     currentIntersect = null;
   }
 
-  // listen for click
-  window.addEventListener('click', () => {
-    if (currentIntersect) {
-      console.log('click')
-    }
-  })
+ 
 
   for (const intersect of intersects) {
     intersect.object.material.color.set('#0000ff');
