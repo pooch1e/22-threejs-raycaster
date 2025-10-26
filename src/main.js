@@ -14,8 +14,6 @@ const sizes = {
 
 const scene = new THREE.Scene();
 
-
-
 //resizes
 window.addEventListener('resize', () => {
   sizes.width = window.innerWidth;
@@ -55,38 +53,26 @@ const geometry = new THREE.SphereGeometry(2);
 
 const sphere1 = new THREE.Mesh(geometry, material);
 sphere1.position.x = -5;
-const sphere2 = new THREE.Mesh(geometry, material);
+const sphere2 = new THREE.Mesh(geometry, material.clone());
 
-const sphere3 = new THREE.Mesh(geometry, material);
+const sphere3 = new THREE.Mesh(geometry, material.clone());
 sphere3.position.x = 5;
 
 scene.add(sphere1, sphere2, sphere3);
 
-
-
 // INSTANTIATE A RAYCASTER
 const raycaster = new THREE.Raycaster();
 
+// HANDLE MOUSE
 
+const mousePos = new THREE.Vector2();
 
+window.addEventListener('mousemove', (e) => {
+  mousePos.x = (e.clientX / sizes.width) * 2 - 1;
+  mousePos.y = -(e.clientY / sizes.height) * 2 + 1;
 
-
-
-// what single object intersection looks like and only fires ray once - not animated
-// const rayOrigin = new THREE.Vector3(-7, 0, 0);
-// const rayDirection = new THREE.Vector3(10, 0, 0);
-
-// rayDirection.normalize();
-// raycaster.set(rayOrigin, rayDirection);
-
-
-// const intersectSingleObject = raycaster.intersectObject(sphere1)
-// console.log(intersectSingleObject)
-
-// const intersectMultipleObjects = raycaster.intersectObjects([sphere1, sphere2, sphere3])
-// console.log(intersectMultipleObjects)
-
-
+  // console.log(mousePos);
+});
 
 // Renderer
 
@@ -99,6 +85,8 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const clock = new THREE.Clock();
 let previousTime = 0;
 
+let currentIntersect = null;
+
 const tick = () => {
   let elapsedTime = clock.getElapsedTime();
   let deltaTime = elapsedTime - previousTime;
@@ -110,24 +98,38 @@ const tick = () => {
   sphere2.position.y = Math.sin(elapsedTime * 0.8) * 1.5;
   sphere3.position.y = Math.sin(elapsedTime * 1.4) * 1.5;
 
-  // Cast a ray
-  // Cast a ray
-  const rayOrigin = new THREE.Vector3(-3, 0, 0);
-  const rayDirection = new THREE.Vector3(1, 0, 0);
-  rayDirection.normalize();
-
-  raycaster.set(rayOrigin, rayDirection);
+  raycaster.setFromCamera(mousePos, camera);
 
   const objectsToTest = [sphere1, sphere2, sphere3];
   const intersects = raycaster.intersectObjects(objectsToTest);
-  console.log(intersects);
 
-  for (const object of objectsToTest) {
-    object.material.color.set('#ff0000');
+  if (intersects.length) {
+    if (!currentIntersect) {
+      console.log('mouse enter');
+    }
+    currentIntersect = intersects[0];
+  } else {
+    if (currentIntersect) {
+      console.log('mouse leave');
+    }
+    currentIntersect = null;
   }
+
+  // listen for click
+  window.addEventListener('click', () => {
+    if (currentIntersect) {
+      console.log('click')
+    }
+  })
 
   for (const intersect of intersects) {
     intersect.object.material.color.set('#0000ff');
+  }
+
+  for (const object of objectsToTest) {
+    if (!intersects.find((intersect) => intersect.object === object)) {
+      object.material.color.set('#ff0000');
+    }
   }
 
   controls.update();
