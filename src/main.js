@@ -66,13 +66,20 @@ scene.add(sphere1, sphere2, sphere3);
 
 // INSTANTIATE A RAYCASTER
 const raycaster = new THREE.Raycaster();
-const rayOrigin = new THREE.Vector3(-7, 0, 0);
-const rayDirection = new THREE.Vector3(10, 0, 0);
 
-rayDirection.normalize();
-raycaster.set(rayOrigin, rayDirection);
+
+
+
+
 
 // what single object intersection looks like and only fires ray once - not animated
+// const rayOrigin = new THREE.Vector3(-7, 0, 0);
+// const rayDirection = new THREE.Vector3(10, 0, 0);
+
+// rayDirection.normalize();
+// raycaster.set(rayOrigin, rayDirection);
+
+
 // const intersectSingleObject = raycaster.intersectObject(sphere1)
 // console.log(intersectSingleObject)
 
@@ -96,6 +103,32 @@ const tick = () => {
   let elapsedTime = clock.getElapsedTime();
   let deltaTime = elapsedTime - previousTime;
   previousTime = elapsedTime;
+
+  // Animate spheres
+
+  sphere1.position.y = Math.sin(elapsedTime * 0.3) * 1.5;
+  sphere2.position.y = Math.sin(elapsedTime * 0.8) * 1.5;
+  sphere3.position.y = Math.sin(elapsedTime * 1.4) * 1.5;
+
+  // Cast a ray
+  // Cast a ray
+  const rayOrigin = new THREE.Vector3(-3, 0, 0);
+  const rayDirection = new THREE.Vector3(1, 0, 0);
+  rayDirection.normalize();
+
+  raycaster.set(rayOrigin, rayDirection);
+
+  const objectsToTest = [sphere1, sphere2, sphere3];
+  const intersects = raycaster.intersectObjects(objectsToTest);
+  console.log(intersects);
+
+  for (const object of objectsToTest) {
+    object.material.color.set('#ff0000');
+  }
+
+  for (const intersect of intersects) {
+    intersect.object.material.color.set('#0000ff');
+  }
 
   controls.update();
 
