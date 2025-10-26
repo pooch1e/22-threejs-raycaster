@@ -14,6 +14,8 @@ const sizes = {
 
 const scene = new THREE.Scene();
 
+
+
 //resizes
 window.addEventListener('resize', () => {
   sizes.width = window.innerWidth;
@@ -29,13 +31,16 @@ window.addEventListener('resize', () => {
 });
 
 // LIGHTS
+
+// Need directional?
+
 const ambientLight = new THREE.AmbientLight('white', 1);
 scene.add(ambientLight);
 
 // CAMERA
 
 const camera = new THREE.PerspectiveCamera(75, sizes.aspect);
-camera.position.z = 20;
+camera.position.z = 10;
 
 scene.add(camera);
 
@@ -56,6 +61,25 @@ const sphere3 = new THREE.Mesh(geometry, material);
 sphere3.position.x = 5;
 
 scene.add(sphere1, sphere2, sphere3);
+
+
+
+// INSTANTIATE A RAYCASTER
+const raycaster = new THREE.Raycaster();
+const rayOrigin = new THREE.Vector3(-7, 0, 0);
+const rayDirection = new THREE.Vector3(10, 0, 0);
+
+rayDirection.normalize();
+raycaster.set(rayOrigin, rayDirection);
+
+// what single object intersection looks like and only fires ray once - not animated
+// const intersectSingleObject = raycaster.intersectObject(sphere1)
+// console.log(intersectSingleObject)
+
+// const intersectMultipleObjects = raycaster.intersectObjects([sphere1, sphere2, sphere3])
+// console.log(intersectMultipleObjects)
+
+
 
 // Renderer
 
